@@ -1,0 +1,62 @@
+﻿<script type="text/javascript" src="../app.js"></script>
+<div class="container-fluit">
+	<div class="row">
+		<div class="col-xs-4">
+      <div class="list-group">
+        <a href="#" class="list-group-item active  list-group-item-primary">
+          <i class="glyphicon glyphicon-list-alt"></i> <b>Danh sách</b>
+        </a>
+        <a href="#" class="list-group-item">Dapibus ac facilisis in</a>
+        <a href="#" class="list-group-item">Morbi leo risus</a>
+        <a href="#" class="list-group-item">Porta ac consectetur ac</a>
+        <a href="#" class="list-group-item">Vestibulum at eros</a>
+      </div>
+		</div>
+		<div class="col-xs-8">
+      <div class="panel panel-primary">
+      <div class="panel-heading">
+        <label class="glyphicon glyphicon-pencil point-cursor"></label> 
+        <label class="label-control">Công việc 1</label>
+        <span class="pull-right mt--7">
+          <button class="btn btn-warning">Lưu</button>
+          <button class="btn btn-danger">Xóa</button>
+          <button class="btn btn-success">Thêm</button>
+        </span>
+      </div>
+      <div class="panel-body">
+        <div class="row form-group">
+          <label class="label-control col-xs-2">Thời hạn</label>
+          <div class="col-xs-4">
+            <input id='due_date' class="form-control" />
+          </div>
+          <label class="label-control col-xs-2">Dự kiến làm</label>
+          <div class="col-xs-4">
+            <input id='do_date' class="form-control" />
+          </div>
+        </div>
+        <div class="row form-group">
+          <label class="label-control col-xs-2">Trạng thái</label>
+          <div class="col-xs-10">
+              <button class="btn btn-default">Đang chờ</button>
+              <button class="btn btn-default">Đang làm</button>
+              <button class="btn btn-default">Hoàn thành</button>
+              <button class="btn btn-default">Quá hạn</button>
+              <button class="btn btn-default">Hủy bỏ</button>
+          </div>
+        </div>
+        <label class="label-control">Các phần của công việc</label>
+        <div class="row form-group">
+          <div class="col-xs-11">
+            <textarea class="form-control" rows="15" placeholder="Mỗi cặp dấu ## đầu dòng sẽ tương ứng với một phần của công việc, sẽ tự hiển thị ra nút hoàn thành ở bên phải, nếu bạn đã hoàn thành phần công việc đó hãy bấm vào dấu v."></textarea>
+          </div>
+          <div class="col-xs-1">
+            <button type="button" class="btn btn-default"><i class="glyphicon glyphicon-ok"></i></button>
+            <button type="button" class="btn btn-default"><i class="glyphicon glyphicon-ok"></i></button>
+            <button type="button" class="btn btn-default"><i class="glyphicon glyphicon-ok"></i></button>
+          </div>
+        </div>
+      </div>
+      </div>
+		</div>
+	</div>
+</div>
