@@ -1,1 +1,0 @@
-var db = new loki('mytask');
