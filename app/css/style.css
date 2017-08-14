@@ -10,3 +10,9 @@
 	font-size: 15px;
 	line-height: 30px
 }
+
+#title {
+	font-size: 30px;
+	color: red;
+	font-family: 'Times new roman'
+}

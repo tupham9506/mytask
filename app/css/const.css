@@ -7,6 +7,8 @@
 .p-15 {padding: 15px; }
 .mb-10 {margin-bottom: 10px;}
 .mb-20 {margin-bottom: 20px;}
+.mr-10 {margin-right: 10px;}
+
 .elip {
 	border-radius: 100%
 }
@@ -16,10 +18,6 @@
 
 .bold {
 	font-weight: bold;
-}
-
-.mt--7 {
-	margin-top: -7px !important;
 }
 
 label { 
