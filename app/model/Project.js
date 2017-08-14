@@ -15,7 +15,8 @@ function project_list(){
 }
 
 function project_info(id){
-  return Project.find({id: id})
+  id = parseInt(id)
+  return Project.find({ $loki : id })
 }
 
 function project_create(data){

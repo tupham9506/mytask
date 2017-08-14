@@ -3,7 +3,7 @@ document.write('<script type="text/javascript" src="../model/Project.js"></scrip
 
 $(document).ready(function (e) {
 
-	// get project list
+	// init project list
 	var taskList = task_list();
   var projectList = project_list();
   if(project_list){
@@ -11,7 +11,7 @@ $(document).ready(function (e) {
       var projectName = projectList[i].name ? projectList[i].name : "Tên chưa xác định";
       var projectDueDate = projectList[i].due_date ? projectList[i].due_date : "";
       var statusLabelType = "", statusLabelContent ="";
-      console.log(projectList[i])
+      
       switch(projectList[i].status){
         case '1': 
           statusLabelType ="label-info";
@@ -42,6 +42,8 @@ $(document).ready(function (e) {
       $('#projectList').append(projectHTML);
     }
   }
+
+  // init daterange
   $('#dueDate').daterangepicker({
     "singleDatePicker": true,
     "autoApply": true,
@@ -55,35 +57,46 @@ $(document).ready(function (e) {
     },
   });
 
-  $('#projectName label').show();
-  $('#projectName input').hide();
+  // selected project list
+  $('#projectList .list-group-item').click(function(e){
 
-  // button action
-  $('#cancelCreateTask').hide();
+    var id = $(this).attr('value');
+    if(!id) id = $('#projectList .list-group-item').first();
+    $('#projectList .list-group-item').removeClass('list-group-item-info');
+    $(this).addClass('list-group-item-info')
+    getProjectInfo(id);
+  })
+
+  // create mode
+  $('#createTaskForm').click(function (e) {
+    $('#dueDate').val(moment().format('DD/MM/YYYY'));
+    $('#startDoDate').val(moment().format('DD/MM/YYYY'));
+    $('#endDoDate').val(moment().format('DD/MM/YYYY'));
+    selectStatus('1');
+    $('#projectName').val('');
+
+    btnAction('create');
+
+  })
+
+  // init create form when load
+  $('#createTaskForm').trigger('click');
 
 });
 
-$('#createTaskForm').click(function (e) {
-  $('#dueDate').val(moment().format('DD/MM/YYYY'));
-  $('#startDoDate').val(moment().format('DD/MM/YYYY'));
-  $('#endDoDate').val(moment().format('DD/MM/YYYY'));
-  selectStatus('1');
 
-  $('#projectName input').show();
-  $('#projectName label').hide();
 
-  btnAction('create');
-  
-
-})
-
-$('#projectList').click(function(e){
-  var id = $(this).val();
-  console.log(id)
+function getProjectInfo(id){
   var projectInfo = project_info(id);
   var taskInfo = task_info(id);
-  console.log(projectInfo)
-})
+
+  if(!projectInfo || !taskInfo || projectInfo.length == 0) return;
+
+  $('#dueDate').val(projectInfo[0].due_date);
+  selectStatus(projectInfo[0].status);
+  $("#projectName").val(projectInfo[0].name)
+}
+
 
 function selectStatus(status){
 
@@ -125,14 +138,16 @@ $(".status-btn .btn").click(function(e){
   var id = $(this).attr('value');
   selectStatus(id);
   $('#btnGroup').attr('active-status', id)
-
 })
 
 // cancel create
 $('#cancelCreateTask').click(function(){
+  var id = $('#projectList .list-group-item-info').attr('value');
+  getProjectInfo(id);
   btnAction('cancel');
 })
 
+// show hide action button
 function btnAction(action){
   switch(action){
     case 'create':
@@ -189,7 +204,7 @@ $('#save').click(function(){
     }
 
     var projectParams = {
-      name: $('#projectName input').val(),
+      name: $('#projectName').val(),
       due_date : $('#dueDate').val(),
       start_do_date : $('#startDoDate').val(),
       end_do_date : $('#endDoDate').val(),
