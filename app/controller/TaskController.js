@@ -3,7 +3,8 @@ document.write('<script type="text/javascript" src="../model/Project.js"></scrip
 
 $(document).ready(function (e) {
 
-  initProductList();
+  initPaging();
+  initProjectList(0);
 
   // init daterange
   $('#dueDate').daterangepicker({
@@ -45,17 +46,25 @@ $(document).ready(function (e) {
   // init create form when load
   $('#createTaskForm').trigger('click');
 
+  // paging
+  $('.pagination li a').click(function(e){
+    var pageId = parseInt($(this).attr('value'));
+    var offset = pageId * 10;
+    if(pageId > 0) offset += 1;
+    console.log
+    initProjectList(offset);
+  });
 });
 
-function initProductList(){
+function initProjectList(offset){
 
     // empty data
     $('#projectList').not('.active').empty();
     $('#projectList').html('<a href="#" class="list-group-item active" style="pointer-events: none"><i class="glyphicon glyphicon-list-alt" ></i> <b>Danh sách dự án</b></a>');
     // init project list
     var taskList = task_list();
-    var projectList = project_list();
-    console.log(projectList)
+    var projectList = project_list(offset);
+
     if(project_list){
       for(var i = 0; i < projectList.length; i++){
         var projectName = projectList[i].name ? projectList[i].name : "Tên chưa xác định";
@@ -84,6 +93,7 @@ function initProductList(){
             break;
 
           case '-1': 
+            statusLabelType ="label-default";
             statusLabelContent = "Hủy bỏ";
             break;
         }
@@ -235,6 +245,29 @@ $('#save').click(function(){
   }
 
   // reload list
-  initProductList()
+  initProjectList()
 
 })
+
+function initPaging(){
+  var count = project_count();
+  var int = Math.floor(count / 10);
+  var fre = count % 10;
+  var numOfPage = int;
+  if(fre > 0) numOfPage += 1;
+
+  var previous = '<li><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>';
+  var next = '<li><a href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>';
+  var content = '';
+  for(var i = 0; i < numOfPage; i++){
+    content += '<li><a href="javascript:void(0)" value="'+ [i] +'">'+ [i+1] +'</a></li>'
+  }
+
+  // if(numOfPage <= 1){
+  //   next = "";
+  //   previous = ""; 
+  //   content = '';
+  // }
+
+  $('.pagination').html(previous + content + next);
+}

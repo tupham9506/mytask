@@ -9,9 +9,16 @@ if(!Project){
   Project = db.addCollection('projects');
 }
 
-function project_list(){
-
-  return Project.find();
+function project_list(offset){
+  if(!offset) offset = 0;
+  
+  return Project
+  .chain()
+  .find()
+  .simplesort('due_date', true)
+  .offset(offset)
+  .limit(10)
+  .data();
 }
 
 function project_info(id){
@@ -25,4 +32,8 @@ function project_create(data){
 
 function project_update(data){
     Project.update(data)
+}
+
+function project_count(){
+  return Project.chain().find().collection.data.length;
 }
