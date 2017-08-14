@@ -3,45 +3,7 @@ document.write('<script type="text/javascript" src="../model/Project.js"></scrip
 
 $(document).ready(function (e) {
 
-	// init project list
-	var taskList = task_list();
-  var projectList = project_list();
-  if(project_list){
-    for(var i = 0; i < projectList.length; i++){
-      var projectName = projectList[i].name ? projectList[i].name : "Tên chưa xác định";
-      var projectDueDate = projectList[i].due_date ? projectList[i].due_date : "";
-      var statusLabelType = "", statusLabelContent ="";
-      
-      switch(projectList[i].status){
-        case '1': 
-          statusLabelType ="label-info";
-          statusLabelContent = "Đang chờ";
-          break;
-
-        case '2': 
-          statusLabelType ="label-primary";
-          statusLabelContent = "Đang làm";
-          break;
-
-        case '3': 
-          statusLabelType ="label-success";
-          statusLabelContent = "Hoàn thành";
-          break;
-
-        case '0': 
-          statusLabelType ="label-warning";
-          statusLabelContent = "QUá hạn";
-          break;
-
-        case '-1': 
-          statusLabelContent = "Hủy bỏ";
-          break;
-      }
-
-      var projectHTML = "<a href='javascript:void(0)' value='" + projectList[i].$loki + "' class='list-group-item'>" + projectDueDate + " - <b>" + projectName + "<span class='label " +  statusLabelType + " pull-right'>" + statusLabelContent +"</span></b></a>";
-      $('#projectList').append(projectHTML);
-    }
-  }
+  initProductList();
 
   // init daterange
   $('#dueDate').daterangepicker({
@@ -74,6 +36,7 @@ $(document).ready(function (e) {
     $('#endDoDate').val(moment().format('DD/MM/YYYY'));
     selectStatus('1');
     $('#projectName').val('');
+    $('#save').attr('value','0');
 
     btnAction('create');
 
@@ -84,6 +47,52 @@ $(document).ready(function (e) {
 
 });
 
+function initProductList(){
+
+    // empty data
+    $('#projectList').not('.active').empty();
+    $('#projectList').html('<a href="#" class="list-group-item active" style="pointer-events: none"><i class="glyphicon glyphicon-list-alt" ></i> <b>Danh sách dự án</b></a>');
+    // init project list
+    var taskList = task_list();
+    var projectList = project_list();
+    console.log(projectList)
+    if(project_list){
+      for(var i = 0; i < projectList.length; i++){
+        var projectName = projectList[i].name ? projectList[i].name : "Tên chưa xác định";
+        var projectDueDate = projectList[i].due_date ? projectList[i].due_date : "";
+        var statusLabelType = "", statusLabelContent ="";
+        
+        switch(projectList[i].status){
+          case '1': 
+            statusLabelType ="label-info";
+            statusLabelContent = "Đang chờ";
+            break;
+
+          case '2': 
+            statusLabelType ="label-primary";
+            statusLabelContent = "Đang làm";
+            break;
+
+          case '3': 
+            statusLabelType ="label-success";
+            statusLabelContent = "Hoàn thành";
+            break;
+
+          case '0': 
+            statusLabelType ="label-danger";
+            statusLabelContent = "Quá hạn";
+            break;
+
+          case '-1': 
+            statusLabelContent = "Hủy bỏ";
+            break;
+        }
+
+        var projectHTML = "<a href='javascript:void(0)' value='" + projectList[i].$loki + "' class='list-group-item'>" + projectDueDate + " - <b>" + projectName + "<span class='label " +  statusLabelType + " pull-right'>" + statusLabelContent +"</span></b></a>";
+        $('#projectList').append(projectHTML);
+      }
+    }
+  }
 
 
 function getProjectInfo(id){
@@ -94,7 +103,8 @@ function getProjectInfo(id){
 
   $('#dueDate').val(projectInfo[0].due_date);
   selectStatus(projectInfo[0].status);
-  $("#projectName").val(projectInfo[0].name)
+  $("#projectName").val(projectInfo[0].name);
+  $('#save').attr('value',id);
 }
 
 
@@ -183,18 +193,16 @@ $('#taskContent').keypress(function(e){
 // save data
 $('#save').click(function(){
 
-  // var id = parseInt($('#save').val());
   var contentString = $('#taskContent').val();
-  
   
   var status = $('#btnGroup').attr('active-status');
 
   var taskParam = [];
   
-  if(!contentString || contentString.toString().trim().length == 0){  
-    $('#errorMessage').html("Nhập nội dung đi bạn êi");
-    return;
-  }
+  // if(!contentString || contentString.toString().trim().length == 0){  
+  //   $('#errorMessage').html("Nhập nội dung đi bạn êi");
+  //   return;
+  // }
 
     var contentArray = contentString.toString().split('## ');
     for(var i = 0; i < contentArray.length; i++){
@@ -206,19 +214,27 @@ $('#save').click(function(){
     var projectParams = {
       name: $('#projectName').val(),
       due_date : $('#dueDate').val(),
-      start_do_date : $('#startDoDate').val(),
-      end_do_date : $('#endDoDate').val(),
       status : status
     };
 
-    // create project
-    project_create(projectParams)
+  // create or udpate
 
+  var id = parseInt($('#save').attr('value'));
 
-
-  if(id > 0){
+  if(id > 0){ // update
+   projectParams = project_info(id)[0];
+    
+    projectParams.name = $('#projectName').val();
+    projectParams.due_date = $('#dueDate').val();
+    projectParams.status = status;
+    project_update(projectParams);
 
   } else { // create new
 
+    project_create(projectParams)
   }
+
+  // reload list
+  initProductList()
+
 })

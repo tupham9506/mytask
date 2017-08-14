@@ -21,5 +21,8 @@ function project_info(id){
 
 function project_create(data){
 		Project.insert(data)
-    var a = Project.find();
+}
+
+function project_update(data){
+    Project.update(data)
 }
