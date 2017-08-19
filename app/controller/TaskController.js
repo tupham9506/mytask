@@ -1,3 +1,4 @@
+document.write('<script type="text/javascript" src="../model/User.js"></script>');
 document.write('<script type="text/javascript" src="../model/Task.js"></script>');
 document.write('<script type="text/javascript" src="../model/Project.js"></script>');
 
@@ -20,15 +21,17 @@ $(document).ready(function (e) {
     },
   });
 
-  // selected project list
-  $('#projectList .list-group-item').click(function(e){
+  // show tip
+  if(userInfo.show_tip){
+    $('#taskContent').attr({'data-toggle': "modal", "data-target": "#showTip"})
+  }
 
-    var id = $(this).attr('value');
-    if(!id) id = $('#projectList .list-group-item').first();
-    $('#projectList .list-group-item').removeClass('list-group-item-info');
-    $(this).addClass('list-group-item-info')
-    getProjectInfo(id);
-  })
+  $('#dontShowTip').click(function(e){
+    userInfo.show_tip = 0;
+    console.log(userInfo)
+    User.update(userInfo);
+    $('#taskContent').attr({'data-toggle': "", "data-target": ""})
+  });
 
   // create mode
   $('#createTaskForm').click(function (e) {
@@ -38,6 +41,7 @@ $(document).ready(function (e) {
     selectStatus('1');
     $('#projectName').val('');
     $('#save').attr('value','0');
+    $('#taskContent').val("## ");
 
     btnAction('create');
 
@@ -51,9 +55,20 @@ $(document).ready(function (e) {
     var pageId = parseInt($(this).attr('value'));
     var offset = pageId * 10;
     if(pageId > 0) offset += 1;
-    console.log
     initProjectList(offset);
   });
+
+  // selected project list
+  $('#projectList').on('click', ".list-group-item", function(e){
+
+    var id = $(this).attr('value');
+    if(!id) id = $('#projectList .list-group-item').first();
+    $('#projectList .list-group-item').removeClass('list-group-item-info');
+    $(this).addClass('list-group-item-info')
+    getProjectInfo(id);
+  });
+
+
 });
 
 function initProjectList(offset){
@@ -106,9 +121,9 @@ function initProjectList(offset){
 
 
 function getProjectInfo(id){
+  
   var projectInfo = project_info(id);
   var taskInfo = task_info(id);
-
   if(!projectInfo || !taskInfo || projectInfo.length == 0) return;
 
   $('#dueDate').val(projectInfo[0].due_date);
@@ -126,6 +141,8 @@ function selectStatus(status){
   $('#btnGroup .btn').removeClass('btn-danger');
   $('#btnGroup .btn').removeClass('btn-danger');
   $('#btnGroup .btn').addClass('btn-default');
+
+  $('#btnGroup').attr('active-status', status);
 
   switch(status){
     case '1': 
@@ -190,6 +207,7 @@ function btnAction(action){
 
 // format content
 $('#taskContent').keypress(function(e){
+
     setTimeout(function(){  
     var enterKey = e.keyCode;
     if(enterKey == 13){
@@ -209,10 +227,15 @@ $('#save').click(function(){
 
   var taskParam = [];
   
-  // if(!contentString || contentString.toString().trim().length == 0){  
-  //   $('#errorMessage').html("Nhập nội dung đi bạn êi");
-  //   return;
-  // }
+  // validate
+  if(!$('#projectName').val() || $('#projectName').val().trim().length == 0){
+    toast('Ê! tên dự án của em đâu rồi?');
+    return;
+  }
+  if(!contentString || contentString.toString().trim().length == 0){  
+    toast('Chưa nhập nội dung công việc bạn êi');
+    return;
+  }
 
     var contentArray = contentString.toString().split('## ');
     for(var i = 0; i < contentArray.length; i++){
@@ -240,12 +263,11 @@ $('#save').click(function(){
     project_update(projectParams);
 
   } else { // create new
-
     project_create(projectParams)
   }
 
   // reload list
-  initProjectList()
+  initProjectList();
 
 })
 
@@ -270,4 +292,15 @@ function initPaging(){
   // }
 
   $('.pagination').html(previous + content + next);
+}
+
+// show err toast
+function toast(message){
+  $.toast({
+    text : message,
+    loader: false,
+    showHideTransition : 'fade',
+    position: "top-right",
+    hideAfter: 1000
+  });
 }

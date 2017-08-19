@@ -16,3 +16,10 @@
 	color: red;
 	font-family: 'Times new roman'
 }
+
+.jq-toast-wrap .jq-toast-single{
+	background-color: rgba(237, 50, 50, 0.8) !important;
+	color:  white;
+	padding: 20px;
+	font-weight: bold;
+}
